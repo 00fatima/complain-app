@@ -16,6 +16,7 @@
             color: #4a5568;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
         }
         .sidebar-item.active {
             background-color: #f3f4f6;
@@ -25,6 +26,16 @@
         }
         .sidebar-item:hover:not(.active) {
             background-color: #f9fafb;
+        }
+        .notification-badge {
+            position: absolute;
+            right: 20px;
+            background-color: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
         }
         .stat-card {
             background: white;
@@ -61,11 +72,26 @@
         .btn-purple:hover {
             background-color: #7c3aed;
         }
+        .btn-volunteer {
+            background-color: #f97316;
+            color: white;
+        }
+        .btn-volunteer:hover {
+            background-color: #ea580c;
+        }
+        .btn-notification {
+            background-color: #6b7280;
+            color: white;
+        }
+        .btn-notification:hover {
+            background-color: #4b5563;
+        }
         .status-badge {
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 500;
+            display: inline-block;
         }
         .status-pending {
             background-color: #fef3c7;
@@ -78,6 +104,14 @@
         .status-found {
             background-color: #dbeafe;
             color: #1e40af;
+        }
+        .status-active {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .status-inactive {
+            background-color: #fee2e2;
+            color: #991b1b;
         }
         .table-header {
             background-color: #f9fafb;
@@ -123,6 +157,39 @@
             font-size: 10px;
             font-weight: 600;
             margin-left: 8px;
+        }
+        .notification-item {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .notification-item:hover {
+            background-color: #f9fafb;
+        }
+        .notification-item.unread {
+            background-color: #eff6ff;
+        }
+        .notification-item.unread:hover {
+            background-color: #dbeafe;
+        }
+        .dashboard-tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .dashboard-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-weight: 500;
+        }
+        .dashboard-tab.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
         }
         
         /* Responsive Styles */
@@ -198,7 +265,7 @@
                     <i class="fas fa-search w-5"></i>
                     <span>Lost & Found</span>
                 </div>
-                <div class="sidebar-item active" onclick="showComplaints(); closeSidebarOnMobile()" id="menu-complaints">
+                <div class="sidebar-item" onclick="showComplaints(); closeSidebarOnMobile()" id="menu-complaints">
                     <i class="fas fa-exclamation-triangle w-5"></i>
                     <span>Complaints</span>
                 </div>
@@ -209,6 +276,7 @@
                 <div class="sidebar-item" onclick="showNotifications(); closeSidebarOnMobile()" id="menu-notifications">
                     <i class="fas fa-bell w-5"></i>
                     <span>Notifications</span>
+                    <span id="notificationSidebarBadge" class="notification-badge hidden">0</span>
                 </div>
             </div>
 
@@ -227,29 +295,41 @@
 
         <!-- Main Content -->
         <div class="main-content flex-1 lg:ml-72 p-4 lg:p-8">
-            <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 mb-6" id="pageTitle">Complaints</h1>
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 mb-6" id="pageTitle">Dashboard</h1>
 
-            <!-- Stats Cards - Responsive Grid -->
+            <!-- Stats Cards -->
             <div class="stats-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8" id="statsSection">
                 <div class="stat-card">
-                    <p class="text-sm text-gray-500 mb-2">Total Reports</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-gray-500 mb-2">Total Reports</p>
+                        <i class="fas fa-clipboard-list text-blue-500 text-xl"></i>
+                    </div>
                     <p class="text-2xl lg:text-3xl font-bold" id="totalReports">0</p>
                 </div>
                 <div class="stat-card">
-                    <p class="text-sm text-gray-500 mb-2">Active Complaints</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-gray-500 mb-2">Active Complaints</p>
+                        <i class="fas fa-exclamation-circle text-yellow-500 text-xl"></i>
+                    </div>
                     <p class="text-2xl lg:text-3xl font-bold" id="activeComplaints">0</p>
                 </div>
                 <div class="stat-card">
-                    <p class="text-sm text-gray-500 mb-2">Items Matched</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-gray-500 mb-2">Items Matched</p>
+                        <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    </div>
                     <p class="text-2xl lg:text-3xl font-bold" id="itemsMatched">0</p>
                 </div>
                 <div class="stat-card">
-                    <p class="text-sm text-gray-500 mb-2">Events Registered</p>
-                    <p class="text-2xl lg:text-3xl font-bold" id="eventsRegistered">0</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-gray-500 mb-2">Active Volunteers</p>
+                        <i class="fas fa-hands-helping text-orange-500 text-xl"></i>
+                    </div>
+                    <p class="text-2xl lg:text-3xl font-bold" id="activeVolunteers">0</p>
                 </div>
             </div>
 
-            <!-- Action Buttons - Responsive -->
+            <!-- Action Buttons -->
             <div class="action-buttons flex flex-col sm:flex-row gap-3 lg:gap-4 mb-8" id="actionButtons">
                 <button onclick="showLostFoundForm()" class="action-btn btn-primary w-full sm:w-auto">
                     <i class="fas fa-plus mr-2"></i>Report Lost Item
@@ -257,21 +337,120 @@
                 <button onclick="showComplaintForm()" class="action-btn btn-success w-full sm:w-auto">
                     <i class="fas fa-exclamation mr-2"></i>Submit Complaint
                 </button>
-                <button onclick="showEventForm()" class="action-btn btn-purple w-full sm:w-auto">
-                    <i class="fas fa-calendar-plus mr-2"></i>Register for Event
+                <button onclick="showVolunteerForm()" class="action-btn btn-volunteer w-full sm:w-auto">
+                    <i class="fas fa-hands-helping mr-2"></i>Register as Volunteer
+                </button>
+                <button onclick="showNotifications()" class="action-btn btn-notification w-full sm:w-auto relative">
+                    <i class="fas fa-bell mr-2"></i>Notifications
+                    <span id="notificationButtonBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                 </button>
             </div>
 
-            <!-- Dashboard Content -->
-            <div id="dashboardContent" class="hidden">
-                <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6 mb-8">
-                    <h2 class="text-lg lg:text-xl font-bold mb-4">Recent Activity</h2>
-                    <div class="space-y-3" id="recentActivity"></div>
+            <!-- Dashboard Content with Tabs -->
+            <div id="dashboardContent">
+                <!-- Dashboard Tabs -->
+                <div class="dashboard-tabs">
+                    <div class="dashboard-tab active" onclick="switchDashboardTab('all')" id="tab-all">All Activity</div>
+                    <div class="dashboard-tab" onclick="switchDashboardTab('lost')" id="tab-lost">Lost & Found</div>
+                    <div class="dashboard-tab" onclick="switchDashboardTab('complaints')" id="tab-complaints">Complaints</div>
+                    <div class="dashboard-tab" onclick="switchDashboardTab('volunteers')" id="tab-volunteers">Volunteers</div>
+                </div>
+
+                <!-- All Activity Table -->
+                <div id="allActivityTable">
+                    <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6">
+                        <h2 class="text-lg lg:text-xl font-bold mb-4">All Activity</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Type</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Title</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">User</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Status</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allActivityList">
+                                    <tr><td colspan="5" class="text-center py-8 text-gray-500">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lost & Found Table -->
+                <div id="lostActivityTable" class="hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6">
+                        <h2 class="text-lg lg:text-xl font-bold mb-4">Lost & Found Items</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Item</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Category</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Location</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Status</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lostActivityList">
+                                    <tr><td colspan="5" class="text-center py-8 text-gray-500">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complaints Table -->
+                <div id="complaintsActivityTable" class="hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6">
+                        <h2 class="text-lg lg:text-xl font-bold mb-4">Complaints</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Title</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Category</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Location</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Status</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="complaintsActivityList">
+                                    <tr><td colspan="5" class="text-center py-8 text-gray-500">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Volunteers Table -->
+                <div id="volunteersActivityTable" class="hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6">
+                        <h2 class="text-lg lg:text-xl font-bold mb-4">Volunteers</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Name</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Event</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Availability</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Status</th>
+                                        <th class="text-left p-3 text-sm font-semibold text-gray-600">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="volunteersActivityList">
+                                    <tr><td colspan="5" class="text-center py-8 text-gray-500">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Complaints Section -->
-            <div id="complaintsSection">
+            <!-- Complaints Section (Existing) -->
+            <div id="complaintsSection" class="hidden">
                 <!-- Submit Complaint Form -->
                 <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6 mb-8 w-full lg:max-w-2xl">
                     <h2 class="text-xl lg:text-2xl font-bold mb-6">Submit Complaint</h2>
@@ -355,7 +534,7 @@
                         </div>
                     </div>
 
-                    <!-- Table Header - Hidden on mobile -->
+                    <!-- Table Header -->
                     <div class="hidden sm:grid grid-cols-12 table-header">
                         <div class="col-span-2">ID</div>
                         <div class="col-span-4">Complaints</div>
@@ -370,12 +549,11 @@
                 </div>
             </div>
 
-            <!-- Lost & Found Form - Complete Form -->
+            <!-- Lost & Found Form (Existing) -->
             <div id="lostFoundForm" class="hidden bg-white rounded-lg shadow-sm p-4 lg:p-6 w-full lg:max-w-2xl">
                 <h2 class="text-xl lg:text-2xl font-bold mb-6">Report Lost Item</h2>
                 
                 <form id="lostItemForm">
-                    <!-- Item Name -->
                     <div class="mb-4">
                         <label class="block text-gray-700 mb-2">Item Name</label>
                         <input type="text" id="itemName" required 
@@ -383,7 +561,6 @@
                                placeholder="Enter item name">
                     </div>
 
-                    <!-- Category -->
                     <div class="mb-4">
                         <label class="block text-gray-700 mb-2">Category</label>
                         <select id="category" required 
@@ -400,7 +577,6 @@
                         </select>
                     </div>
 
-                    <!-- Description -->
                     <div class="mb-4">
                         <label class="block text-gray-700 mb-2">Description</label>
                         <textarea id="description" rows="3" required 
@@ -408,7 +584,6 @@
                                   placeholder="Describe the item"></textarea>
                     </div>
 
-                    <!-- Location -->
                     <div class="mb-4">
                         <label class="block text-gray-700 mb-2">Location</label>
                         <input type="text" id="location" required 
@@ -416,7 +591,6 @@
                                placeholder="Where was it lost/found?">
                     </div>
 
-                    <!-- Urgency -->
                     <div class="mb-6">
                         <label class="block text-gray-700 mb-3">Urgency</label>
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6">
@@ -435,7 +609,6 @@
                         </div>
                     </div>
 
-                    <!-- Submit and Cancel Buttons -->
                     <div class="flex flex-col sm:flex-row gap-3">
                         <button type="button" onclick="submitLostItem()" class="action-btn btn-primary w-full sm:w-auto">
                             Report Lost Item
@@ -446,6 +619,142 @@
                     </div>
                 </form>
             </div>
+
+            <!-- Volunteers Section (Existing) -->
+            <div id="volunteersSection" class="hidden">
+                <!-- Register as Volunteer Form -->
+                <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6 mb-8 w-full lg:max-w-2xl">
+                    <h2 class="text-xl lg:text-2xl font-bold mb-6">Register as Volunteer</h2>
+                    
+                    <form id="volunteerForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Full Name</label>
+                            <input type="text" id="volunteerName" required 
+                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                                   placeholder="Enter your full name">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Email</label>
+                            <input type="email" id="volunteerEmail" required 
+                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                                   placeholder="Enter your email">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Phone Number</label>
+                            <input type="tel" id="volunteerPhone" required 
+                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                                   placeholder="Enter your phone number">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Select Event</label>
+                            <select id="volunteerEvent" required 
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                                <option value="">Select an event</option>
+                                <option value="Community Cleanup">Community Cleanup</option>
+                                <option value="Tech Workshop">Tech Workshop</option>
+                                <option value="Health Camp">Health Camp</option>
+                                <option value="Food Drive">Food Drive</option>
+                                <option value="Education Support">Education Support</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Availability</label>
+                            <select id="volunteerAvailability" required 
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                                <option value="">Select availability</option>
+                                <option value="Weekdays">Weekdays (Mon-Fri)</option>
+                                <option value="Weekends">Weekends (Sat-Sun)</option>
+                                <option value="Evenings">Evenings (6 PM - 10 PM)</option>
+                                <option value="Flexible">Flexible</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-2">Skills (Optional)</label>
+                            <textarea id="volunteerSkills" rows="2" 
+                                      class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                                      placeholder="List any relevant skills"></textarea>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button type="button" onclick="submitVolunteer()" class="action-btn btn-volunteer w-full sm:w-auto">
+                                Register as Volunteer
+                            </button>
+                            <button type="button" onclick="hideVolunteerForm()" class="action-btn bg-gray-200 text-gray-700 hover:bg-gray-300 w-full sm:w-auto">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Volunteers List -->
+                <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6" id="volunteersListSection">
+                    <div class="filter-section flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                        <h2 class="text-lg lg:text-xl font-bold">
+                            <span>Volunteers List</span>
+                            <span id="volunteerAdminBadge" class="admin-badge hidden">Admin View</span>
+                        </h2>
+                        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                            <select id="volunteerEventFilter" class="filter-select w-full sm:w-auto" onchange="filterVolunteers()">
+                                <option value="All">All Events</option>
+                                <option value="Community Cleanup">Community Cleanup</option>
+                                <option value="Tech Workshop">Tech Workshop</option>
+                                <option value="Health Camp">Health Camp</option>
+                                <option value="Food Drive">Food Drive</option>
+                                <option value="Education Support">Education Support</option>
+                            </select>
+                            <select id="volunteerStatusFilter" class="filter-select w-full sm:w-auto" onchange="filterVolunteers()">
+                                <option value="All">All Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Table Header -->
+                    <div class="hidden sm:grid grid-cols-12 table-header">
+                        <div class="col-span-3">Name</div>
+                        <div class="col-span-2">Event</div>
+                        <div class="col-span-2">Availability</div>
+                        <div class="col-span-3">Contact</div>
+                        <div class="col-span-2">Status</div>
+                    </div>
+
+                    <!-- Table Body -->
+                    <div id="volunteersList" class="space-y-3 sm:space-y-0">
+                        <div class="text-center py-8 text-gray-500">No volunteers found</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Section (New) -->
+            <div id="notificationsSection" class="hidden">
+                <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl lg:text-2xl font-bold">Notifications</h2>
+                        <div class="flex gap-3">
+                            <button onclick="markAllNotificationsRead()" class="text-sm text-blue-600 hover:text-blue-800">
+                                Mark all as read
+                            </button>
+                            <select id="notificationFilter" class="filter-select" onchange="filterNotifications()">
+                                <option value="all">All</option>
+                                <option value="unread">Unread</option>
+                                <option value="complaint">Complaints</option>
+                                <option value="lost_found">Lost & Found</option>
+                                <option value="volunteer">Volunteers</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="notificationsList" class="divide-y">
+                        <div class="text-center py-8 text-gray-500">No notifications</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -454,6 +763,9 @@
 
         let currentUser = null;
         let allComplaints = [];
+        let allVolunteers = [];
+        let allNotifications = [];
+        let notificationCheckInterval;
 
         // Mobile menu toggle
         document.getElementById('menuToggle').addEventListener('click', function() {
@@ -488,9 +800,13 @@
                 window.isAdmin = profile?.role === 'admin';
                 document.getElementById('userRole').textContent = window.isAdmin ? 'Admin' : 'User';
                 
-                // Load dashboard data and complaints
+                // Load all data
                 loadDashboardData();
-                loadComplaints();
+                loadNotifications();
+                
+                // Start checking for new notifications
+                startNotificationCheck();
+                
                 return user;
             } catch (error) {
                 console.error('Auth error:', error);
@@ -518,61 +834,419 @@
                     .select('*', { count: 'exact', head: true })
                     .eq('status', 'Found');
 
-                // Get events registered
-                const { count: eventsRegistered } = await supabase
-                    .from('event_registrations')
+                // Get active volunteers
+                const { count: activeVolunteers } = await supabase
+                    .from('volunteers')
                     .select('*', { count: 'exact', head: true })
-                    .eq('user_id', currentUser?.id);
+                    .eq('status', 'Active');
 
                 document.getElementById('totalReports').textContent = totalReports || 0;
                 document.getElementById('activeComplaints').textContent = activeComplaints || 0;
                 document.getElementById('itemsMatched').textContent = itemsMatched || 0;
-                document.getElementById('eventsRegistered').textContent = eventsRegistered || 0;
+                document.getElementById('activeVolunteers').textContent = activeVolunteers || 0;
 
-                // Load recent activity
-                loadRecentActivity();
+                // Load all activity tables
+                loadAllActivity();
+                loadLostActivity();
+                loadComplaintsActivity();
+                loadVolunteersActivity();
             } catch (error) {
                 console.error('Error loading dashboard:', error);
             }
         }
 
-        // Load recent activity
-        async function loadRecentActivity() {
+        // Load all activity
+        async function loadAllActivity() {
             try {
-                const { data: items, error } = await supabase
+                // Get lost & found items with user emails
+                const { data: lostItems } = await supabase
                     .from('lost_found_items')
-                    .select('*')
+                    .select('*, profiles!lost_found_items_user_id_fkey(email)')
                     .order('created_at', { ascending: false })
-                    .limit(5);
+                    .limit(10);
 
-                if (error) throw error;
+                // Get complaints with user emails
+                const { data: complaints } = await supabase
+                    .from('complaints')
+                    .select('*, profiles!complaints_user_id_fkey(email)')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
 
-                const activityHtml = items?.map(item => `
-                    <div class="activity-item p-3 bg-gray-50 rounded-lg flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-${getItemIcon(item.category)} text-blue-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium">${item.item_name}</p>
-                                <p class="text-sm text-gray-500">${item.location || 'No location'}</p>
-                            </div>
-                        </div>
-                        <span class="status-badge ${item.status === 'Pending' ? 'status-pending' : 'status-found'}">
-                            ${item.status}
-                        </span>
-                    </div>
-                `).join('') || '<p class="text-gray-500">No recent activity</p>';
+                // Get volunteers with user emails
+                const { data: volunteers } = await supabase
+                    .from('volunteers')
+                    .select('*, profiles!volunteers_user_id_fkey(email)')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
 
-                document.getElementById('recentActivity').innerHTML = activityHtml;
+                // Combine and sort all activities
+                const allActivities = [
+                    ...(lostItems?.map(i => ({ ...i, type: 'lost_found' })) || []),
+                    ...(complaints?.map(c => ({ ...c, type: 'complaint' })) || []),
+                    ...(volunteers?.map(v => ({ ...v, type: 'volunteer' })) || [])
+                ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 20);
+
+                if (allActivities.length === 0) {
+                    document.getElementById('allActivityList').innerHTML = 
+                        '<tr><td colspan="5" class="text-center py-8 text-gray-500">No activity found</td></tr>';
+                    return;
+                }
+
+                const html = allActivities.map(activity => {
+                    let typeIcon, title, userEmail, status, statusClass;
+                    
+                    if (activity.type === 'lost_found') {
+                        typeIcon = 'fa-search text-blue-600';
+                        title = activity.item_name;
+                        userEmail = activity.profiles?.email || 'Unknown';
+                        status = activity.status;
+                        statusClass = status === 'Pending' ? 'status-pending' : 'status-found';
+                    } else if (activity.type === 'complaint') {
+                        typeIcon = 'fa-exclamation-triangle text-yellow-600';
+                        title = activity.title || activity.complaint_title;
+                        userEmail = activity.profiles?.email || 'Unknown';
+                        status = activity.status;
+                        statusClass = status === 'Pending' ? 'status-pending' : 'status-resolved';
+                    } else {
+                        typeIcon = 'fa-hands-helping text-orange-600';
+                        title = activity.name;
+                        userEmail = activity.profiles?.email || 'Unknown';
+                        status = activity.status;
+                        statusClass = status === 'Active' ? 'status-active' : 'status-inactive';
+                    }
+
+                    return `
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-3">
+                                <i class="fas ${typeIcon} mr-2"></i>
+                                <span class="text-sm capitalize">${activity.type.replace('_', ' ')}</span>
+                            </td>
+                            <td class="p-3 font-medium">${title}</td>
+                            <td class="p-3 text-sm text-gray-600">${userEmail}</td>
+                            <td class="p-3"><span class="status-badge ${statusClass}">${status}</span></td>
+                            <td class="p-3 text-sm text-gray-500">${new Date(activity.created_at).toLocaleDateString()}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                document.getElementById('allActivityList').innerHTML = html;
             } catch (error) {
-                console.error('Error loading activity:', error);
+                console.error('Error loading all activity:', error);
             }
         }
 
-        // ============== FIXED COMPLAINTS FUNCTIONS ==============
+        // Load lost & found activity
+        async function loadLostActivity() {
+            try {
+                const { data, error } = await supabase
+                    .from('lost_found_items')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
 
-        // Load complaints - FIXED
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    document.getElementById('lostActivityList').innerHTML = 
+                        '<tr><td colspan="5" class="text-center py-8 text-gray-500">No lost & found items</td></tr>';
+                    return;
+                }
+
+                const html = data.map(item => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 font-medium">${item.item_name}</td>
+                        <td class="p-3 text-sm">${item.category || 'N/A'}</td>
+                        <td class="p-3 text-sm">${item.location || 'N/A'}</td>
+                        <td class="p-3"><span class="status-badge ${item.status === 'Pending' ? 'status-pending' : 'status-found'}">${item.status}</span></td>
+                        <td class="p-3 text-sm text-gray-500">${new Date(item.created_at).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('lostActivityList').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading lost activity:', error);
+            }
+        }
+
+        // Load complaints activity
+        async function loadComplaintsActivity() {
+            try {
+                const { data, error } = await supabase
+                    .from('complaints')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    document.getElementById('complaintsActivityList').innerHTML = 
+                        '<tr><td colspan="5" class="text-center py-8 text-gray-500">No complaints found</td></tr>';
+                    return;
+                }
+
+                const html = data.map(complaint => {
+                    const title = complaint.complaint_title || complaint.title || 'N/A';
+                    return `
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-3 font-medium">${title}</td>
+                            <td class="p-3 text-sm">${complaint.category || 'N/A'}</td>
+                            <td class="p-3 text-sm">${complaint.location || 'N/A'}</td>
+                            <td class="p-3"><span class="status-badge ${complaint.status === 'Pending' ? 'status-pending' : 'status-resolved'}">${complaint.status}</span></td>
+                            <td class="p-3 text-sm text-gray-500">${new Date(complaint.created_at).toLocaleDateString()}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                document.getElementById('complaintsActivityList').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading complaints activity:', error);
+            }
+        }
+
+        // Load volunteers activity
+        async function loadVolunteersActivity() {
+            try {
+                const { data, error } = await supabase
+                    .from('volunteers')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    document.getElementById('volunteersActivityList').innerHTML = 
+                        '<tr><td colspan="5" class="text-center py-8 text-gray-500">No volunteers found</td></tr>';
+                    return;
+                }
+
+                const html = data.map(volunteer => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 font-medium">${volunteer.name}</td>
+                        <td class="p-3 text-sm">${volunteer.event || 'N/A'}</td>
+                        <td class="p-3 text-sm">${volunteer.availability || 'N/A'}</td>
+                        <td class="p-3"><span class="status-badge ${volunteer.status === 'Active' ? 'status-active' : 'status-inactive'}">${volunteer.status}</span></td>
+                        <td class="p-3 text-sm text-gray-500">${new Date(volunteer.created_at).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('volunteersActivityList').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading volunteers activity:', error);
+            }
+        }
+
+        // ============== NOTIFICATIONS FUNCTIONS ==============
+
+        // Load notifications
+        async function loadNotifications() {
+            try {
+                const { data, error } = await supabase
+                    .from('notifications')
+                    .select('*')
+                    .eq('user_id', currentUser?.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allNotifications = data || [];
+                displayNotifications(allNotifications);
+                updateNotificationBadges();
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        // Display notifications
+        function displayNotifications(notifications) {
+            const filter = document.getElementById('notificationFilter').value;
+            
+            let filtered = notifications;
+            if (filter === 'unread') {
+                filtered = filtered.filter(n => !n.is_read);
+            } else if (filter !== 'all') {
+                filtered = filtered.filter(n => n.type === filter);
+            }
+
+            if (filtered.length === 0) {
+                document.getElementById('notificationsList').innerHTML = 
+                    '<div class="text-center py-8 text-gray-500">No notifications found</div>';
+                return;
+            }
+
+            const html = filtered.map(notification => {
+                const typeIcons = {
+                    'complaint': 'fa-exclamation-triangle text-yellow-600',
+                    'lost_found': 'fa-search text-blue-600',
+                    'volunteer': 'fa-hands-helping text-orange-600',
+                    'event': 'fa-calendar text-purple-600'
+                };
+                
+                return `
+                    <div class="notification-item ${!notification.is_read ? 'unread' : ''}" 
+                         onclick="markNotificationRead('${notification.id}')">
+                        <div class="flex items-start gap-3">
+                            <i class="fas ${typeIcons[notification.type] || 'fa-bell'} mt-1"></i>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <h3 class="font-semibold">${notification.title}</h3>
+                                    <span class="text-xs text-gray-500">${new Date(notification.created_at).toLocaleString()}</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">${notification.message}</p>
+                                ${!notification.is_read ? 
+                                    '<span class="text-xs text-blue-600 mt-1 inline-block">Click to mark as read</span>' : 
+                                    ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('notificationsList').innerHTML = html;
+        }
+
+        // Create notification
+        async function createNotification(userId, title, message, type, referenceId) {
+            try {
+                const { error } = await supabase
+                    .from('notifications')
+                    .insert([{
+                        user_id: userId,
+                        title: title,
+                        message: message,
+                        type: type,
+                        reference_id: referenceId,
+                        is_read: false
+                    }]);
+
+                if (error) throw error;
+                
+                // If this is for current user, reload notifications
+                if (userId === currentUser?.id) {
+                    loadNotifications();
+                }
+            } catch (error) {
+                console.error('Error creating notification:', error);
+            }
+        }
+
+        // Mark notification as read
+        window.markNotificationRead = async function(notificationId) {
+            try {
+                const { error } = await supabase
+                    .from('notifications')
+                    .update({ is_read: true })
+                    .eq('id', notificationId);
+
+                if (error) throw error;
+
+                // Update local state
+                const notification = allNotifications.find(n => n.id === notificationId);
+                if (notification) {
+                    notification.is_read = true;
+                }
+                
+                displayNotifications(allNotifications);
+                updateNotificationBadges();
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        };
+
+        // Mark all notifications as read
+        window.markAllNotificationsRead = async function() {
+            try {
+                const { error } = await supabase
+                    .from('notifications')
+                    .update({ is_read: true })
+                    .eq('user_id', currentUser?.id)
+                    .eq('is_read', false);
+
+                if (error) throw error;
+
+                allNotifications.forEach(n => n.is_read = true);
+                displayNotifications(allNotifications);
+                updateNotificationBadges();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'All notifications marked as read',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } catch (error) {
+                console.error('Error marking all as read:', error);
+            }
+        };
+
+        // Update notification badges
+        function updateNotificationBadges() {
+            const unreadCount = allNotifications.filter(n => !n.is_read).length;
+            const sidebarBadge = document.getElementById('notificationSidebarBadge');
+            const buttonBadge = document.getElementById('notificationButtonBadge');
+
+            if (unreadCount > 0) {
+                sidebarBadge.textContent = unreadCount;
+                sidebarBadge.classList.remove('hidden');
+                buttonBadge.textContent = unreadCount;
+                buttonBadge.classList.remove('hidden');
+            } else {
+                sidebarBadge.classList.add('hidden');
+                buttonBadge.classList.add('hidden');
+            }
+        }
+
+        // Filter notifications
+        window.filterNotifications = function() {
+            displayNotifications(allNotifications);
+        };
+
+        // Start checking for new notifications
+        function startNotificationCheck() {
+            if (notificationCheckInterval) {
+                clearInterval(notificationCheckInterval);
+            }
+            
+            notificationCheckInterval = setInterval(async () => {
+                if (currentUser) {
+                    const { data, error } = await supabase
+                        .from('notifications')
+                        .select('*')
+                        .eq('user_id', currentUser.id)
+                        .eq('is_read', false)
+                        .order('created_at', { ascending: false });
+
+                    if (!error && data) {
+                        const newCount = data.length;
+                        const oldUnread = allNotifications.filter(n => !n.is_read).length;
+                        
+                        if (newCount > oldUnread) {
+                            // New notifications arrived
+                            loadNotifications();
+                            
+                            // Show toast for new notifications
+                            const newNotifications = data.slice(0, newCount - oldUnread);
+                            newNotifications.forEach(n => {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'New Notification',
+                                    text: n.title,
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+                            });
+                        }
+                    }
+                }
+            }, 30000); // Check every 30 seconds
+        }
+
+        // ============== COMPLAINTS FUNCTIONS ==============
+
         async function loadComplaints() {
             try {
                 let query = supabase
@@ -591,12 +1265,9 @@
                 displayComplaints(allComplaints);
             } catch (error) {
                 console.error('Error loading complaints:', error);
-                document.getElementById('complaintsList').innerHTML = 
-                    '<div class="text-center py-8 text-red-500">Error loading complaints</div>';
             }
         }
 
-        // Display complaints - FIXED (handles both title and complaint_title)
         function displayComplaints(complaints) {
             if (!complaints || complaints.length === 0) {
                 document.getElementById('complaintsList').innerHTML = 
@@ -605,7 +1276,6 @@
             }
 
             const html = complaints.map(c => {
-                // Use whichever title field is available
                 const displayTitle = c.complaint_title || c.title || 'No title';
                 
                 return `
@@ -630,14 +1300,10 @@
             document.getElementById('complaintsList').innerHTML = html;
         }
 
-        // Submit complaint - FIXED (inserts into both columns)
         window.submitComplaint = async function() {
             try {
-                if (!currentUser) {
-                    throw new Error('Please login first');
-                }
+                if (!currentUser) throw new Error('Please login first');
 
-                const form = document.getElementById('complaintForm');
                 const title = document.getElementById('complaintTitle').value;
                 const category = document.getElementById('complaintCategory').value;
                 const description = document.getElementById('complaintDescription').value;
@@ -648,11 +1314,10 @@
                     throw new Error('Please fill all fields');
                 }
 
-                // Insert into BOTH columns to be safe
                 const complaintData = {
                     user_id: currentUser.id,
-                    title: title,                 // for title column
-                    complaint_title: title,       // for complaint_title column
+                    title: title,
+                    complaint_title: title,
                     category: category,
                     description: description,
                     location: location,
@@ -660,15 +1325,28 @@
                     status: 'Pending'
                 };
 
-                console.log('Submitting complaint:', complaintData);
-
                 const { error } = await supabase
                     .from('complaints')
                     .insert([complaintData]);
 
-                if (error) {
-                    console.error('Insert error:', error);
-                    throw error;
+                if (error) throw error;
+
+                // Create notification for admin
+                const { data: admins } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('role', 'admin');
+
+                if (admins) {
+                    admins.forEach(admin => {
+                        createNotification(
+                            admin.id,
+                            'New Complaint Submitted',
+                            `${currentUser.email} submitted a new complaint: ${title}`,
+                            'complaint',
+                            null
+                        );
+                    });
                 }
 
                 await Swal.fire({
@@ -679,7 +1357,7 @@
                     showConfirmButton: false
                 });
 
-                form.reset();
+                document.getElementById('complaintForm').reset();
                 loadComplaints();
                 
             } catch (error) {
@@ -692,7 +1370,6 @@
             }
         };
 
-        // Filter complaints
         window.filterComplaints = function() {
             const statusFilter = document.getElementById('statusFilter').value;
             const categoryFilter = document.getElementById('categoryFilter').value;
@@ -711,14 +1388,10 @@
 
         // ============== LOST & FOUND FUNCTIONS ==============
 
-        // Submit lost item
         window.submitLostItem = async function() {
             try {
-                if (!currentUser) {
-                    throw new Error('Please login first');
-                }
+                if (!currentUser) throw new Error('Please login first');
 
-                const form = document.getElementById('lostItemForm');
                 const itemName = document.getElementById('itemName').value;
                 const category = document.getElementById('category').value;
                 const description = document.getElementById('description').value;
@@ -745,6 +1418,24 @@
 
                 if (error) throw error;
 
+                // Create notification for admin
+                const { data: admins } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('role', 'admin');
+
+                if (admins) {
+                    admins.forEach(admin => {
+                        createNotification(
+                            admin.id,
+                            'New Lost Item Reported',
+                            `${currentUser.email} reported a lost item: ${itemName}`,
+                            'lost_found',
+                            null
+                        );
+                    });
+                }
+
                 await Swal.fire({
                     icon: 'success',
                     title: 'Success!',
@@ -753,7 +1444,7 @@
                     showConfirmButton: false
                 });
 
-                form.reset();
+                document.getElementById('lostItemForm').reset();
                 showDashboard();
                 
             } catch (error) {
@@ -766,27 +1457,243 @@
             }
         };
 
+        // ============== VOLUNTEER FUNCTIONS ==============
+
+        async function loadVolunteers() {
+            try {
+                let query = supabase
+                    .from('volunteers')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (!window.isAdmin) {
+                    query = query.eq('user_id', currentUser?.id);
+                }
+
+                const { data, error } = await query;
+                if (error) throw error;
+                
+                allVolunteers = data || [];
+                displayVolunteers(allVolunteers);
+                
+                if (window.isAdmin) {
+                    document.getElementById('volunteerAdminBadge').classList.remove('hidden');
+                } else {
+                    document.getElementById('volunteerAdminBadge').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading volunteers:', error);
+            }
+        }
+
+        function displayVolunteers(volunteers) {
+            if (!volunteers || volunteers.length === 0) {
+                document.getElementById('volunteersList').innerHTML = 
+                    '<div class="text-center py-8 text-gray-500">No volunteers found</div>';
+                return;
+            }
+
+            const html = volunteers.map(v => `
+                <div class="block sm:grid grid-cols-12 table-row p-4 sm:p-3">
+                    <div class="sm:hidden text-xs text-gray-500 mb-1">${v.name}</div>
+                    <div class="sm:col-span-3 mb-2 sm:mb-0">
+                        <div class="font-medium">${v.name}</div>
+                        <div class="text-xs text-gray-500 sm:hidden">${v.event}</div>
+                    </div>
+                    <div class="sm:col-span-2 text-sm mb-2 sm:mb-0">
+                        <span class="sm:hidden font-medium">Event: </span>${v.event}
+                    </div>
+                    <div class="sm:col-span-2 text-sm mb-2 sm:mb-0">
+                        <span class="sm:hidden font-medium">Availability: </span>${v.availability}
+                    </div>
+                    <div class="sm:col-span-3 text-sm mb-2 sm:mb-0">
+                        <span class="sm:hidden font-medium">Contact: </span>
+                        ${v.email}<br>
+                        <span class="text-xs text-gray-500">${v.phone || ''}</span>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <span class="status-badge ${v.status === 'Active' ? 'status-active' : 'status-inactive'}">
+                            ${v.status || 'Active'}
+                        </span>
+                        ${window.isAdmin ? `
+                            <button onclick="toggleVolunteerStatus('${v.id}', '${v.status === 'Active' ? 'Inactive' : 'Active'}')" 
+                                    class="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200">
+                                Toggle
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('volunteersList').innerHTML = html;
+        }
+
+        window.submitVolunteer = async function() {
+            try {
+                if (!currentUser) throw new Error('Please login first');
+
+                const name = document.getElementById('volunteerName').value;
+                const email = document.getElementById('volunteerEmail').value;
+                const phone = document.getElementById('volunteerPhone').value;
+                const event = document.getElementById('volunteerEvent').value;
+                const availability = document.getElementById('volunteerAvailability').value;
+                const skills = document.getElementById('volunteerSkills').value;
+
+                if (!name || !email || !phone || !event || !availability) {
+                    throw new Error('Please fill all required fields');
+                }
+
+                const volunteerData = {
+                    user_id: currentUser.id,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    event: event,
+                    availability: availability,
+                    skills: skills,
+                    status: 'Active'
+                };
+
+                const { error } = await supabase
+                    .from('volunteers')
+                    .insert([volunteerData]);
+
+                if (error) throw error;
+
+                // Create notification for admin
+                const { data: admins } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('role', 'admin');
+
+                if (admins) {
+                    admins.forEach(admin => {
+                        createNotification(
+                            admin.id,
+                            'New Volunteer Registration',
+                            `${name} registered as volunteer for ${event}`,
+                            'volunteer',
+                            null
+                        );
+                    });
+                }
+
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Registered as volunteer successfully',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                document.getElementById('volunteerForm').reset();
+                
+                if (window.isAdmin) {
+                    loadVolunteers();
+                } else {
+                    showDashboard();
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to register as volunteer'
+                });
+            }
+        };
+
+        window.toggleVolunteerStatus = async function(volunteerId, newStatus) {
+            try {
+                const { error } = await supabase
+                    .from('volunteers')
+                    .update({ status: newStatus })
+                    .eq('id', volunteerId);
+
+                if (error) throw error;
+
+                // Create notification for volunteer
+                const { data: volunteer } = await supabase
+                    .from('volunteers')
+                    .select('user_id, name')
+                    .eq('id', volunteerId)
+                    .single();
+
+                if (volunteer) {
+                    createNotification(
+                        volunteer.user_id,
+                        'Volunteer Status Updated',
+                        `Your volunteer status has been changed to ${newStatus}`,
+                        'volunteer',
+                        volunteerId
+                    );
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Updated!',
+                    text: `Volunteer status changed to ${newStatus}`,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                loadVolunteers();
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to update volunteer status'
+                });
+            }
+        };
+
+        window.filterVolunteers = function() {
+            const eventFilter = document.getElementById('volunteerEventFilter').value;
+            const statusFilter = document.getElementById('volunteerStatusFilter').value;
+
+            let filtered = [...allVolunteers];
+
+            if (eventFilter !== 'All') {
+                filtered = filtered.filter(v => v.event === eventFilter);
+            }
+            if (statusFilter !== 'All') {
+                filtered = filtered.filter(v => v.status === statusFilter);
+            }
+
+            displayVolunteers(filtered);
+        };
+
         // ============== UI FUNCTIONS ==============
 
-        window.showComplaints = function() {
-            document.getElementById('pageTitle').textContent = 'Complaints';
-            document.getElementById('complaintsSection').classList.remove('hidden');
-            document.getElementById('dashboardContent').classList.add('hidden');
-            document.getElementById('lostFoundForm').classList.add('hidden');
-            document.getElementById('statsSection').classList.add('hidden');
-            document.getElementById('actionButtons').classList.add('hidden');
+        window.switchDashboardTab = function(tab) {
+            document.querySelectorAll('.dashboard-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
             
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('menu-complaints').classList.add('active');
+            document.getElementById('allActivityTable').classList.add('hidden');
+            document.getElementById('lostActivityTable').classList.add('hidden');
+            document.getElementById('complaintsActivityTable').classList.add('hidden');
+            document.getElementById('volunteersActivityTable').classList.add('hidden');
             
-            loadComplaints();
+            if (tab === 'all') {
+                document.getElementById('allActivityTable').classList.remove('hidden');
+            } else if (tab === 'lost') {
+                document.getElementById('lostActivityTable').classList.remove('hidden');
+            } else if (tab === 'complaints') {
+                document.getElementById('complaintsActivityTable').classList.remove('hidden');
+            } else if (tab === 'volunteers') {
+                document.getElementById('volunteersActivityTable').classList.remove('hidden');
+            }
         };
 
         window.showDashboard = function() {
             document.getElementById('pageTitle').textContent = 'Dashboard';
-            document.getElementById('complaintsSection').classList.add('hidden');
             document.getElementById('dashboardContent').classList.remove('hidden');
+            document.getElementById('complaintsSection').classList.add('hidden');
             document.getElementById('lostFoundForm').classList.add('hidden');
+            document.getElementById('volunteersSection').classList.add('hidden');
+            document.getElementById('notificationsSection').classList.add('hidden');
             document.getElementById('statsSection').classList.remove('hidden');
             document.getElementById('actionButtons').classList.remove('hidden');
             
@@ -796,11 +1703,29 @@
             loadDashboardData();
         };
 
+        window.showComplaints = function() {
+            document.getElementById('pageTitle').textContent = 'Complaints';
+            document.getElementById('complaintsSection').classList.remove('hidden');
+            document.getElementById('dashboardContent').classList.add('hidden');
+            document.getElementById('lostFoundForm').classList.add('hidden');
+            document.getElementById('volunteersSection').classList.add('hidden');
+            document.getElementById('notificationsSection').classList.add('hidden');
+            document.getElementById('statsSection').classList.add('hidden');
+            document.getElementById('actionButtons').classList.add('hidden');
+            
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('menu-complaints').classList.add('active');
+            
+            loadComplaints();
+        };
+
         window.showLostFound = function() {
             document.getElementById('pageTitle').textContent = 'Lost & Found';
+            document.getElementById('lostFoundForm').classList.remove('hidden');
             document.getElementById('complaintsSection').classList.add('hidden');
             document.getElementById('dashboardContent').classList.add('hidden');
-            document.getElementById('lostFoundForm').classList.remove('hidden');
+            document.getElementById('volunteersSection').classList.add('hidden');
+            document.getElementById('notificationsSection').classList.add('hidden');
             document.getElementById('statsSection').classList.add('hidden');
             document.getElementById('actionButtons').classList.add('hidden');
             
@@ -808,15 +1733,49 @@
             document.getElementById('menu-lostfound').classList.add('active');
         };
 
+        window.showVolunteers = function() {
+            document.getElementById('pageTitle').textContent = 'Volunteers';
+            document.getElementById('volunteersSection').classList.remove('hidden');
+            document.getElementById('complaintsSection').classList.add('hidden');
+            document.getElementById('dashboardContent').classList.add('hidden');
+            document.getElementById('lostFoundForm').classList.add('hidden');
+            document.getElementById('notificationsSection').classList.add('hidden');
+            document.getElementById('statsSection').classList.add('hidden');
+            document.getElementById('actionButtons').classList.add('hidden');
+            
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('menu-volunteers').classList.add('active');
+            
+            loadVolunteers();
+        };
+
+        window.showNotifications = function() {
+            document.getElementById('pageTitle').textContent = 'Notifications';
+            document.getElementById('notificationsSection').classList.remove('hidden');
+            document.getElementById('dashboardContent').classList.add('hidden');
+            document.getElementById('complaintsSection').classList.add('hidden');
+            document.getElementById('lostFoundForm').classList.add('hidden');
+            document.getElementById('volunteersSection').classList.add('hidden');
+            document.getElementById('statsSection').classList.add('hidden');
+            document.getElementById('actionButtons').classList.add('hidden');
+            
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('menu-notifications').classList.add('active');
+            
+            loadNotifications();
+        };
+
         window.showLostFoundForm = window.showLostFound;
         window.hideLostFoundForm = window.showDashboard;
         window.showComplaintForm = window.showComplaints;
-        
-        window.showVolunteers = () => Swal.fire('Coming Soon', 'Volunteers module coming soon!', 'info');
-        window.showNotifications = () => Swal.fire('Coming Soon', 'Notifications module coming soon!', 'info');
+        window.showVolunteerForm = window.showVolunteers;
+        window.hideVolunteerForm = window.showDashboard;
         window.showEventForm = () => Swal.fire('Coming Soon', 'Event registration coming soon!', 'info');
 
         window.logout = async () => {
+            if (notificationCheckInterval) {
+                clearInterval(notificationCheckInterval);
+            }
             await supabase.auth.signOut();
             window.location.href = 'login.html';
         };
