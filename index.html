@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Sign Up</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="config.js" defer></script>
+  <script type="module" src="app.js" defer></script>
+
+  <!-- ICONS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+ <div class="container">
+        <div class="info-section">
+            <div class="logo">
+                <img src="./images-removebg-preview.png" alt="SMIT Logo">
+            </div>
+            <h1>Campus Portal</h1>
+            <p>Manage reports, complaints & events in one place.</p>
+        </div>
+
+        <div class="form-section">
+            <form id="login-form">
+                <h2>Login</h2>
+                
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+
+                <div class="role-selector">
+                    <button type="button" class="role-btn active">Student</button>
+                    <button type="button" class="role-btn">Admin</button>
+                </div>
+
+                <button type="submit" class="btn-primary">Log In</button>
+
+                <div class="divider">or</div>
+
+                <button type="button" class="btn-google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Sign in with Google
+                </button>
+
+                <p class="toggle-text">Don't have an account? <span onclick="document.getElementById('popup').style.display='flex'">Sign Up</span></p>
+                <div id="message"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="popup" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('popup').style.display='none'">&times;</span>
+            <h2>Create Account</h2>
+            <form id="signup-form">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name" placeholder="John Doe" required>
+                </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="signup-email" placeholder="email@example.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="Min 6 characters" required>
+                </div>
+                <button type="submit" class="btn-primary">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+
+  <!-- Add this script back - it handles popup open/close -->
+  <script>
+    // Popup open/close functionality
+    document.getElementById("showSignup").onclick = () => {
+      document.getElementById("popup").style.display = "flex";
+    };
+
+    document.getElementById("closePopup").onclick = () => {
+      document.getElementById("popup").style.display = "none";
+    };
+
+    // Close popup when clicking outside
+    document.getElementById("popup").onclick = (e) => {
+      if (e.target.id === "popup") {
+        document.getElementById("popup").style.display = "none";
+      }
+    };
+  </script>
+
+</body>
+</html>
